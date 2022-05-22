@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 )
@@ -13,16 +12,39 @@ var (
 )
 
 func main() {
-	bug, bugColumns, bugRows := Open(bagPath)
-	landscape, landscapeColumns, landscapeRows := Open(landscapePath)
-	fmt.Println(bug, bugColumns, bugRows)
-	fmt.Println(landscape, landscapeColumns, landscapeRows)
+	bug := Open(bagPath)
+	land := Open(landscapePath)
+	count := 0
+	for i := range land {
+		for j := range land[i] {
+		loop:
+			for y := range bug {
+				for x := range bug[y] {
+					if len(land) <= i+y {
+						break loop
+					}
+					if len(land[i+y]) <= j+x {
+						break loop
+					}
+
+					if land[i+y][j+x] == bug[y][x] || bug[y][x] == 32 {
+						if len(bug)-1 == y && len(bug[y])-1 == x {
+							count++
+						}
+					} else {
+						break loop
+					}
+				}
+			}
+
+		}
+	}
+
+	print(count)
 }
 
-func Open(filePath string) ([][]byte, int, int) {
-	bug := make([][]byte, 0)
-	columns := 0
-	rows := 0
+func Open(filePath string) [][]byte {
+	arr := make([][]byte, 0)
 	f, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -32,15 +54,12 @@ func Open(filePath string) ([][]byte, int, int) {
 	scanner := bufio.NewScanner(f)
 
 	for scanner.Scan() {
-		if columns < len(scanner.Text()) {
-			columns = len(scanner.Text())
-		}
-		bug = append(bug, []byte(scanner.Text()))
+		arr = append(arr, []byte(scanner.Text()))
 	}
 	err = scanner.Err()
 	if err != nil {
 		log.Fatal()
 	}
-	rows = len(bug)
-	return bug, rows, columns
+
+	return arr
 }
