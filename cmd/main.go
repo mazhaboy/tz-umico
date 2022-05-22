@@ -27,7 +27,7 @@ func main() {
 						break loop
 					}
 
-					if land[i+y][j+x] == bug[y][x] || bug[y][x] == 32 {
+					if land[i+y][j+x] == bug[y][x] {
 						if len(bug)-1 == y && len(bug[y])-1 == x {
 							count++
 						}
