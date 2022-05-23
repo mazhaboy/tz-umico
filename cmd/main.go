@@ -38,9 +38,9 @@ func BugCount(bug [][]byte, land [][]byte) int {
 					}
 				}
 			}
-
 		}
 	}
+
 	return count
 }
 
