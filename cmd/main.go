@@ -2,19 +2,22 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
-)
-
-var (
-	bagPath       = "resources/bug/bug.txt"
-	landscapePath = "resources/test-keys/landscape.txt"
+	"tz-umico/domain"
 )
 
 func main() {
-	bug := Open(bagPath)
-	land := Open(landscapePath)
+	bug := Open(domain.BugPath)
+	land := Open(domain.LandscapePath)
+	res := BugCount(bug, land)
+	fmt.Println(res)
+}
+
+func BugCount(bug [][]byte, land [][]byte) int {
 	count := 0
+
 	for i := range land {
 		for j := range land[i] {
 		loop:
@@ -26,7 +29,6 @@ func main() {
 					if len(land[i+y]) <= j+x {
 						break loop
 					}
-
 					if land[i+y][j+x] == bug[y][x] {
 						if len(bug)-1 == y && len(bug[y])-1 == x {
 							count++
@@ -39,13 +41,13 @@ func main() {
 
 		}
 	}
-
-	print(count)
+	return count
 }
 
 func Open(filePath string) [][]byte {
 	arr := make([][]byte, 0)
 	f, err := os.Open(filePath)
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -57,6 +59,7 @@ func Open(filePath string) [][]byte {
 		arr = append(arr, []byte(scanner.Text()))
 	}
 	err = scanner.Err()
+
 	if err != nil {
 		log.Fatal()
 	}
