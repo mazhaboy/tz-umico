@@ -8,29 +8,40 @@ import (
 	"tz-umico/domain"
 )
 
+//Entry point of program.
 func main() {
 	bug := Open(domain.BugPath)
-	land := Open(domain.LandscapePath)
-	res := BugCount(bug, land)
+	landscape := Open(domain.LandscapePath)
+	res := BugCount(bug, landscape)
+	// Printing result.
 	fmt.Println(res)
 }
 
-func BugCount(bug [][]byte, land [][]byte) int {
+// BugCount function counts number of bugs in the landscape.
+func BugCount(bug [][]byte, landscape [][]byte) int {
 	count := 0
-
-	for i := range land {
-		for j := range land[i] {
+	// Iterate through y-coordinates of the landscape.
+	for i := range landscape {
+		// Iterate through x-coordinates of the landscape.
+		for j := range landscape[i] {
 		loop:
+			// Iterate through y-coordinates of the bug.
 			for y := range bug {
+				// Iterate through x-coordinates of the bug.
 				for x := range bug[y] {
-					if len(land) <= i+y {
+					// Checking to out of range of y-coordinates.
+					if len(landscape) <= i+y {
 						break loop
 					}
-					if len(land[i+y]) <= j+x {
+					// Checking to out of range of x-coordinates.
+					if len(landscape[i+y]) <= j+x {
 						break loop
 					}
-					if land[i+y][j+x] == bug[y][x] {
+					// Comparing bytes of landscape and bug.
+					if landscape[i+y][j+x] == bug[y][x] {
+						// Checking if we are in the last byte of the bug.
 						if len(bug)-1 == y && len(bug[y])-1 == x {
+							// If yes -> count +1 and continue iteration.
 							count++
 						}
 					} else {
@@ -44,6 +55,7 @@ func BugCount(bug [][]byte, land [][]byte) int {
 	return count
 }
 
+// Open function reads file and sterilize content of the file to [][]byte format.
 func Open(filePath string) [][]byte {
 	arr := make([][]byte, 0)
 	f, err := os.Open(filePath)
